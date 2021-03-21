@@ -4,7 +4,6 @@
 * [Usage](#usage)
 * [Examples](#examples)
 * [FAQs](#faqs)
-* [Screenshots](#screenshots)
 * [CPU Load](#cpuload)
 * [Revisions](#revisions)
 * [Copyright and License](#copyright-and-license)
@@ -13,7 +12,7 @@
 
 Mtee is a Win32 console application that sends any data it receives to stdout and to any number of files. Useful if you want to watch and record the output from a batch file or program. It can also prefix each line of output with a timestamp.
 
-Mtee is a 45kb standalone executable. It does not create any temporary files or write to the registry. There is no installation procedure, just run it. To remove all traces of Mtee from your system, just delete it.
+Mtee is a small standalone executable. It does not create any temporary files or write to the registry. There is no installation procedure, just run it. To remove all traces of Mtee from your system, just delete it.
 
 Mtee is simple to use and only has several options. To list them, type:-
 
@@ -24,25 +23,24 @@ mtee /?
 ## Usage<a name="usage"></a>
 
 <pre>
-  MTEE [/A | /U] [/C] [/D] [/T] [/E] [[/+] file] [...]
+  MTEE [/O | /U] [/C] [/D] [/T] [/E] [/A] [file...]
 
-  /A    Convert output to ANSI. Default output is same as input.
+  /O    Convert output from UCS-2 to OEM encoding. Default output is same as input.
   /C    Continue if errors occur opening/writing to file (advanced users only).
   /D    Prefix each line of output with local date in YYYY-MM-DD format.
   /T    Prefix each line of output with local time in HH:MM:SS.MSS format.
-  /U    Convert output to UNICODE. Default output is same as input.
+  /U    Convert output from OEM to UCS-2 encoding. Default output is same as input.
   /E    Exit with exit code of piped process.
   /ET   Calculate and display elapsed time.
-  /CPU  Calculate and display average CPU load during execution.  
-  /+    Append to existing file. If omitted, existing file is overwritten.
-  file  File to receive the output. File is overwritten if /+ not specified.
-  ...   Any number of additional files. Use /+ before each file to append.
+  /CPU  Calculate and display average CPU load during execution.
+  /A    Append to existing file. If omitted, existing file is overwritten.
+  file  File to receive the output. Files are overwritten if /A not specified.
 
-  Example usage:-
+  Example usage:
 
   1) script.cmd | mtee result.txt
-  2) ftp -n -s:ftp.scr | mtee local.log /+ \\server\logs$\remote.log
-  3) update.cmd 2>&1 | mtee/d/t/+ log.txt
+  2) ftp -n -s:ftp.scr | mtee local.log | mtee /a \\\\server\\logs$\\remote.log
+  3) update.cmd 2>&1 | mtee/d/t/a log.txt
 
   1) Sends the output of script.cmd to the console and to result.log. If
      result.txt already exists, it will be overwritten.
@@ -69,7 +67,7 @@ script.cmd | mtee result.log
 Send the output of the automated ftp session to the console and to two log files, LOCAL.LOG is overwritten if it already exists. REMOTE.LOG is appended to if it exists, otherwise it is created:-
 
 ```batch
-ftp -n -s:ftp.scr | mtee local.log /+ \\server\logs\remote.log
+ftp -n -s:ftp.scr | mtee local.log | mtee /a \\server\logs\remote.log
 ```
 
 Make two copies of LOG whilst viewing LOG on the screen. If NEW1 and NEW2 already exist, they are overwritten:-
@@ -87,7 +85,7 @@ update.cmd 2>&1 | mtee/d/t/+ log.txt
 Send the output from BACKUP.CMD to the console and two remote log files. If there is an error opening any of the log files (server offline for instance) MTEE will continue. If the destination files already exist, they are appended to:-
 
 ```batch
-backup.cmd | mtee /c/+ \\svr1\log$\bu.log /+ \\svr2\logs$\bu.log
+backup.cmd | mtee /c/a \\svr1\log$\bu.log \\svr2\logs$\bu.log
 ```
 
 Make multiple carbon copies of patch.exe:-
@@ -114,10 +112,6 @@ How can I determine the exit code of the process piped into Mtee?
 
 > Update Mtee to at least version v2.21 and use the /E option.
 
-## Screenshots<a name="screenshots"></a>
-
-![Screenshot of Mtee](https://raw.githubusercontent.com/danielt3/mtee/master/mtee-screenshot1.png)
-
 ## CPU Load<a name="cpuload"></a>
 
 The CPU load calculations are based in the information from the ```GetSystemTimes``` Windows API. 
@@ -135,6 +129,7 @@ This is a rough estimate and subject to criticsm. I'm willing to listen and impl
 
 Revision | Date | Changes
 ---|---|---
+2.7 | 2021-03-21 | /+ renamed to /A to be compatible with gnu tee, behavior also compatible with gnu tee. /A renamed to /O and all mentioning of ansi replaced by oem to avoid confusion between ANSI windows API and ANSI encoding used by GUI apps on windows, command line apps using oem encoding. - also supported in options. Codeblocks project replaced by cmake.
 2.6 | 2019-04-29 | Improved processes list detection; don't open process handle if not needed.
 2.5 | 2019-04-14 | Added /CPU option (calculate and display average CPU load).
 2.4 | 2018-08-16 | Fixed elapsed time display (added a newline at the end).

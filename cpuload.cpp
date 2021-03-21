@@ -9,7 +9,7 @@ static ULARGE_INTEGER lastKernelTime_;
 static ULARGE_INTEGER lastIdleTime_;
 static ULARGE_INTEGER lastUserTime_;
 
-void cpuLoadInit( void )
+void cpuLoadInit()
 {
     memset(&lastKernelTime_, 0x00, sizeof(lastKernelTime_));
     memset(&lastIdleTime_, 0x00, sizeof(lastIdleTime_));
