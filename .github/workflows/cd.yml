@@ -1,0 +1,23 @@
+name: CD
+
+on:
+  push:
+    tags:
+      - 'v*.*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ilammy/msvc-dev-cmd@v1
+    - name: Build
+      run: |
+        cmake . -G Ninja -DCMAKE_BUILD_TYPE=Release
+        ninja
+    - name: Release
+    - uses: softprops/action-gh-release@v1
+      with:
+          files: mtee.exe
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
